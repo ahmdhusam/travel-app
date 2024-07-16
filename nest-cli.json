@@ -1,10 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/travel-app/src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "webpack": true
+    "webpack": true,
+    "tsConfigPath": "apps/travel-app/tsconfig.app.json"
   },
   "projects": {
     "database": {
@@ -15,6 +16,116 @@
       "compilerOptions": {
         "tsConfigPath": "libs/database/tsconfig.lib.json"
       }
+    },
+    "travel-app": {
+      "type": "application",
+      "root": "apps/travel-app",
+      "entryFile": "main",
+      "sourceRoot": "apps/travel-app/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/travel-app/tsconfig.app.json"
+      }
+    },
+    "auditing": {
+      "type": "application",
+      "root": "apps/auditing",
+      "entryFile": "main",
+      "sourceRoot": "apps/auditing/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/auditing/tsconfig.app.json"
+      }
+    },
+    "authentication": {
+      "type": "application",
+      "root": "apps/authentication",
+      "entryFile": "main",
+      "sourceRoot": "apps/authentication/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/authentication/tsconfig.app.json"
+      }
+    },
+    "booking": {
+      "type": "application",
+      "root": "apps/booking",
+      "entryFile": "main",
+      "sourceRoot": "apps/booking/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/booking/tsconfig.app.json"
+      }
+    },
+    "external-api-integration": {
+      "type": "application",
+      "root": "apps/external-api-integration",
+      "entryFile": "main",
+      "sourceRoot": "apps/external-api-integration/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/external-api-integration/tsconfig.app.json"
+      }
+    },
+    "hotels": {
+      "type": "application",
+      "root": "apps/hotels",
+      "entryFile": "main",
+      "sourceRoot": "apps/hotels/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/hotels/tsconfig.app.json"
+      }
+    },
+    "logging-and-monitoring": {
+      "type": "application",
+      "root": "apps/logging-and-monitoring",
+      "entryFile": "main",
+      "sourceRoot": "apps/logging-and-monitoring/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/logging-and-monitoring/tsconfig.app.json"
+      }
+    },
+    "notifications": {
+      "type": "application",
+      "root": "apps/notifications",
+      "entryFile": "main",
+      "sourceRoot": "apps/notifications/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notifications/tsconfig.app.json"
+      }
+    },
+    "payments": {
+      "type": "application",
+      "root": "apps/payments",
+      "entryFile": "main",
+      "sourceRoot": "apps/payments/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/payments/tsconfig.app.json"
+      }
+    },
+    "transactions": {
+      "type": "application",
+      "root": "apps/transactions",
+      "entryFile": "main",
+      "sourceRoot": "apps/transactions/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/transactions/tsconfig.app.json"
+      }
+    },
+    "users": {
+      "type": "application",
+      "root": "apps/users",
+      "entryFile": "main",
+      "sourceRoot": "apps/users/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/users/tsconfig.app.json"
+      }
+    },
+    "core": {
+      "type": "library",
+      "root": "libs/core",
+      "entryFile": "index",
+      "sourceRoot": "libs/core/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/core/tsconfig.lib.json"
+      }
     }
-  }
+  },
+  "monorepo": true,
+  "root": "apps/travel-app"
 }
