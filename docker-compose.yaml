@@ -8,7 +8,7 @@ services:
   api:
     platform: linux/amd64
     build:
-      context: backend
+      context: .
       dockerfile: Dockerfile
     env_file:
       - .env
@@ -17,7 +17,7 @@ services:
     environment:
       NODE_ENV: development
     volumes:
-      - ./backend:/app
+      - ./:/app
     depends_on:
       - postgres
       - redis
@@ -43,7 +43,7 @@ services:
       - 15672:15672
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq/
-      - ./rabbitmq/:/var/log/rabbitmq
+      - ./config/rabbitmq/:/var/log/rabbitmq
 
   redis:
     image: redis:7.0
@@ -59,9 +59,9 @@ services:
       ACCESS_LOG: /var/log/custom-logs/access.log
     volumes:
       - https-portal-data:/var/lib/https-portal
-      - ./nginx-conf/localhost.conf.erb:/var/lib/nginx-conf/localhost.conf.erb:ro
-      - ./nginx-conf/localhost.ssl.conf.erb:/var/lib/nginx-conf/localhost.ssl.conf.erb:ro
-      - ./nginx-conf/logs:/var/log/custom-logs/
+      - ./config/nginx-conf/localhost.conf.erb:/var/lib/nginx-conf/localhost.conf.erb:ro
+      - ./config/nginx-conf/localhost.ssl.conf.erb:/var/lib/nginx-conf/localhost.ssl.conf.erb:ro
+      - ./config/nginx-conf/logs:/var/log/custom-logs/
 
     env_file:
       - .env
@@ -78,9 +78,9 @@ services:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
     init: true
     volumes:
-      - ./setup/entrypoint.sh:/entrypoint.sh:ro,Z
-      - ./setup/lib.sh:/lib.sh:ro,Z
-      - ./setup/roles:/roles:ro,Z
+      - ./config/setup/entrypoint.sh:/entrypoint.sh:ro,Z
+      - ./config/setup/lib.sh:/lib.sh:ro,Z
+      - ./config/setup/roles:/roles:ro,Z
     environment:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
@@ -97,7 +97,7 @@ services:
       args:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
     volumes:
-      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
+      - ./config/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
       - elasticsearchdata:/usr/share/elasticsearch/data:Z
     ports:
       - 9200:9200
@@ -123,8 +123,8 @@ services:
       args:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
     volumes:
-      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
-      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro,Z
+      - ./config/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
+      - ./config/logstash/pipeline:/usr/share/logstash/pipeline:ro,Z
     ports:
       - 5044:5044
       - 50000:50000/tcp
@@ -146,7 +146,7 @@ services:
       args:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
     volumes:
-      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
+      - ./config/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
     ports:
       - 5601:5601
     environment:
