@@ -11,7 +11,9 @@ describe('LoggingAndMonitoringController', () => {
       providers: [LoggingAndMonitoringService],
     }).compile();
 
-    loggingAndMonitoringController = app.get<LoggingAndMonitoringController>(LoggingAndMonitoringController);
+    loggingAndMonitoringController = app.get<LoggingAndMonitoringController>(
+      LoggingAndMonitoringController,
+    );
   });
 
   describe('root', () => {

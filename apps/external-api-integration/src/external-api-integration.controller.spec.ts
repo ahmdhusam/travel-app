@@ -11,7 +11,10 @@ describe('ExternalApiIntegrationController', () => {
       providers: [ExternalApiIntegrationService],
     }).compile();
 
-    externalApiIntegrationController = app.get<ExternalApiIntegrationController>(ExternalApiIntegrationController);
+    externalApiIntegrationController =
+      app.get<ExternalApiIntegrationController>(
+        ExternalApiIntegrationController,
+      );
   });
 
   describe('root', () => {

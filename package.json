@@ -15,7 +15,7 @@
     "start:dev-booking": "nest start --watch booking",
     "start:dev-external-api-integration": "nest start --watch external-api-integration",
     "start:dev-hotels": "nest start --watch hotels",
-    "start:dev-logging-and-monitoring": "nest start --watch auditing",
+    "start:dev-logging-and-monitoring": "nest start --watch logging-and-monitoring",
     "start:dev-notifications": "nest start --watch notifications",
     "start:dev-payments": "nest start --watch payments",
     "start:dev-transactions": "nest start --watch transactions",

@@ -3,7 +3,9 @@ import { LoggingAndMonitoringService } from './logging-and-monitoring.service';
 
 @Controller()
 export class LoggingAndMonitoringController {
-  constructor(private readonly loggingAndMonitoringService: LoggingAndMonitoringService) {}
+  constructor(
+    private readonly loggingAndMonitoringService: LoggingAndMonitoringService,
+  ) {}
 
   @Get()
   getHello(): string {

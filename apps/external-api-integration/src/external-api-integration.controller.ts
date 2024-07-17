@@ -3,7 +3,9 @@ import { ExternalApiIntegrationService } from './external-api-integration.servic
 
 @Controller()
 export class ExternalApiIntegrationController {
-  constructor(private readonly externalApiIntegrationService: ExternalApiIntegrationService) {}
+  constructor(
+    private readonly externalApiIntegrationService: ExternalApiIntegrationService,
+  ) {}
 
   @Get()
   getHello(): string {
