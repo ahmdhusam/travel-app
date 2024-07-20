@@ -4,9 +4,10 @@ import { ExternalApiIntegrationService } from './external-api-integration.servic
 import { DatabaseModule } from '@app/database';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AmadeusService } from './services/amadeus.service';
-import { HttpModule } from '@nestjs/axios';
+import { HttpModule, HttpService } from '@nestjs/axios';
 import { GlobalMicroServicesProviders } from '@app/core/settings/global-microservices-providers';
 import { ExternalApiIntegrationProviders } from './enums/external-api-integration-providers.enum';
+import { map } from 'rxjs';
 
 @Module({
   imports: [
@@ -14,15 +15,41 @@ import { ExternalApiIntegrationProviders } from './enums/external-api-integratio
     DatabaseModule,
     HttpModule.registerAsync({
       inject: [ConfigService],
-      useFactory(configService: ConfigService) {
+      async useFactory(configService: ConfigService) {
+        const httpService = new HttpService();
+
+        const credentials = await httpService
+          .post(
+            'https://test.api.amadeus.com/v1/security/oauth2/token',
+            new URLSearchParams({
+              grant_type: configService.getOrThrow(
+                'EXTERNAL_API_INTEGRATION.AMADEUS.GRANT_TYPE',
+              ),
+              client_id: configService.getOrThrow(
+                'EXTERNAL_API_INTEGRATION.AMADEUS.CLIENT_ID',
+              ),
+              client_secret: configService.getOrThrow(
+                'EXTERNAL_API_INTEGRATION.AMADEUS.CLIENT_SECRET',
+              ),
+            }).toString(),
+            {
+              timeout: 10000,
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+            },
+          )
+          .pipe(map((response) => response.data))
+          .toPromise();
+
         return {
           timeout: 10000, // 10s
           headers: {
-            Authorization: `Bearer ${configService.getOrThrow('EXTERNAL_API_INTEGRATION.AMADEUS.APIKEY')}`,
+            Authorization: `Bearer ${credentials.access_token}`,
             'Content-Type': 'application/vnd.amadeus+json',
             'X-HTTP-Method-Override': 'GET',
           },
-          baseURL: 'test.api.amadeus.com/v2/shopping',
+          baseURL: 'https://test.api.amadeus.com/v2/shopping',
         };
       },
     }),
