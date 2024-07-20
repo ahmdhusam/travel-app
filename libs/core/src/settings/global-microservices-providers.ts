@@ -20,7 +20,9 @@ export const GlobalMicroServicesProviders = [
         enableImplicitConversion: true,
       },
       exceptionFactory(errors) {
-        return new RpcException(errors);
+        throw new RpcException(
+          errors.map((error) => Object.values(error.constraints)).flat(),
+        );
       },
     }),
   },
