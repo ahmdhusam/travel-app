@@ -21,6 +21,7 @@
     "start:dev-transactions": "nest start --watch transactions",
     "start:dev-travel-app": "nest start --watch travel-app",
     "start:dev-users": "nest start --watch users",
+    "start:dev-flights": "nest start --watch flights",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/apps/travel-app/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
