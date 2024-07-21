@@ -2,9 +2,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { SerializeInterceptor } from '../interceptors/serialize.interceptor';
 import { GlobalSerialize } from '../dtos/global.serialize';
-import { RpcException } from '@nestjs/microservices';
 
-export const GlobalMicroServicesProviders = [
+export const GlobalProviders = [
   {
     provide: APP_INTERCEPTOR,
     useValue: new SerializeInterceptor(GlobalSerialize),
@@ -18,11 +17,6 @@ export const GlobalMicroServicesProviders = [
       forbidUnknownValues: true,
       transformOptions: {
         enableImplicitConversion: true,
-      },
-      exceptionFactory(errors) {
-        throw new RpcException(
-          errors.map((error) => Object.values(error.constraints)).flat(),
-        );
       },
     }),
   },

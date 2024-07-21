@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsIn,
   IsDateString,
+  IsNumber,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -68,7 +69,7 @@ class SearchCriteria {
   flightFilters?: FlightFilters;
 
   @IsOptional()
-  @IsString()
+  @IsNumber()
   maxFlightOffers?: number;
 }
 
