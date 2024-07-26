@@ -1,10 +1,10 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { map } from 'rxjs/operators';
 import { HttpService } from '@nestjs/axios';
-import { AmadeusFlightOffersRequestDto } from './dto/amadeus-request.dto';
-import { AmadeusFlightOffersResponseDto } from './dto/amadeus-response.dto';
 import { IFlightOffersService } from '../interfaces/flight-offers-service.interface';
 import { ConfigService } from '@nestjs/config';
+import { GetFlightOffersDto } from 'apps/shared/dtos/amadeus-data-model.dto';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class AmadeusService
@@ -42,10 +42,9 @@ export class AmadeusService
     this.httpService.axiosRef.interceptors.request.clear();
   }
 
-  getFlightOffers<
-    TReq = AmadeusFlightOffersRequestDto,
-    TRes = AmadeusFlightOffersResponseDto,
-  >(searchCriteria: TReq): Promise<TRes[]> {
+  getFlightOffers<TReq = GetFlightOffersDto, TRes = unknown>(
+    searchCriteria: TReq,
+  ): Observable<TRes> {
     return this.httpService
       .post(`/v2/shopping/flight-offers`, searchCriteria, {
         headers: {
@@ -53,8 +52,7 @@ export class AmadeusService
           'X-HTTP-Method-Override': 'GET',
         },
       })
-      .pipe(map((response) => response.data))
-      .toPromise();
+      .pipe(map((response) => response.data));
   }
 
   async getCredentials() {
@@ -63,13 +61,13 @@ export class AmadeusService
         '/v1/security/oauth2/token',
         new URLSearchParams({
           grant_type: this.configService.getOrThrow(
-            'EXTERNAL_API_INTEGRATION.AMADEUS.GRANT_TYPE',
+            'EXTERNAL_API_INTEGRATION_SERVICE.AMADEUS.GRANT_TYPE',
           ),
           client_id: this.configService.getOrThrow(
-            'EXTERNAL_API_INTEGRATION.AMADEUS.CLIENT_ID',
+            'EXTERNAL_API_INTEGRATION_SERVICE.AMADEUS.CLIENT_ID',
           ),
           client_secret: this.configService.getOrThrow(
-            'EXTERNAL_API_INTEGRATION.AMADEUS.CLIENT_SECRET',
+            'EXTERNAL_API_INTEGRATION_SERVICE.AMADEUS.CLIENT_SECRET',
           ),
         }).toString(),
         {

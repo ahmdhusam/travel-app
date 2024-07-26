@@ -1,8 +1,8 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { FlightsProviders } from './enums/flights-providers.enum';
-import { AmadeusFlightOffersRequestDto } from 'apps/external-api-integration/src/services/dto/amadeus-request.dto';
-import { FlightsEvents } from 'apps/flights/src/enums/flights-events.enum';
+import { FlightsServiceEvents } from '@app/core/enums/flights-service-events.enum';
+import { GetFlightOffersDto } from 'apps/shared/dtos/amadeus-data-model.dto';
 
 @Injectable()
 export class FlightsService {
@@ -11,12 +11,10 @@ export class FlightsService {
     private readonly flightsServiceClient: ClientProxy,
   ) {}
 
-  searchFlights(criteria: AmadeusFlightOffersRequestDto) {
-    return this.flightsServiceClient
-      .send(FlightsEvents.GET_FLIGHT_OFFERS, criteria)
-      .toPromise()
-      .catch((err) => {
-        throw new BadRequestException(err);
-      });
+  searchFlights(criteria: GetFlightOffersDto) {
+    return this.flightsServiceClient.send(
+      FlightsServiceEvents.GET_FLIGHT_OFFERS,
+      criteria,
+    );
   }
 }

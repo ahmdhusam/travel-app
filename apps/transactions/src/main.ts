@@ -7,7 +7,7 @@ async function bootstrap() {
   const appContext =
     await NestFactory.createApplicationContext(TransactionsModule);
   const configService = appContext.get(ConfigService);
-  const port = configService.getOrThrow('TRANSACTIONS.PORT');
+  const port = configService.getOrThrow('TRANSACTIONS_SERVICE.PORT');
   appContext.close();
 
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(

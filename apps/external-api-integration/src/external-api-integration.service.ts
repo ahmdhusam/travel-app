@@ -1,16 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { IFlightOffersService } from './interfaces/flight-offers-service.interface';
-import { AmadeusFlightOffersRequestDto } from './services/dto/amadeus-request.dto';
-import { ExternalApiIntegrationProviders } from './enums/external-api-integration-providers.enum';
+import { ExternalApiIntegrationServiceProviders } from './enums/external-api-integration-service-providers.enum';
+import { GetFlightOffersDto } from 'apps/shared/dtos/amadeus-data-model.dto';
 
 @Injectable()
 export class ExternalApiIntegrationService {
   constructor(
-    @Inject(ExternalApiIntegrationProviders.AMADEUS_SERVICE)
+    @Inject(ExternalApiIntegrationServiceProviders.AMADEUS_SERVICE)
     private readonly flightOffersService: IFlightOffersService,
   ) {}
 
-  getFlightOffers(criteria: AmadeusFlightOffersRequestDto) {
+  getFlightOffers(criteria: GetFlightOffersDto) {
     return this.flightOffersService.getFlightOffers(criteria);
   }
 }

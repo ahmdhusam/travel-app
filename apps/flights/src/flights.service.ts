@@ -1,20 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { FlightsProviders } from './enums/flights-providers.enum';
 import { ClientProxy } from '@nestjs/microservices';
-import { ExternalApiIntegrationEvents } from 'apps/external-api-integration/src/enums/external-api-integration-events.enum';
-import { AmadeusFlightOffersRequestDto } from 'apps/external-api-integration/src/services/dto/amadeus-request.dto';
+import { FlightsServiceProviders } from './enums/flights-service-providers.enum';
+import { GetFlightOffersDto } from 'apps/shared/dtos/amadeus-data-model.dto';
+import { ExternalApiIntegrationServiceEvents } from '@app/core/enums/external-api-integration-service-events.enum';
 
 @Injectable()
 export class FlightsService {
   constructor(
-    @Inject(FlightsProviders.ExternalApiIntegrationClient)
-    private readonly ExternalApiIntegrationClient: ClientProxy,
+    @Inject(FlightsServiceProviders.EXTERNAL_API_INTEGRATION_SERVICE_CLIENT)
+    private readonly ExternalApiIntegrationServiceClient: ClientProxy,
   ) {}
 
-  getFlightOffers(criteria: AmadeusFlightOffersRequestDto) {
-    return this.ExternalApiIntegrationClient.send(
-      ExternalApiIntegrationEvents.GET_FLIGHT_OFFERS,
+  getFlightOffers(criteria: GetFlightOffersDto) {
+    return this.ExternalApiIntegrationServiceClient.send(
+      ExternalApiIntegrationServiceEvents.GET_FLIGHT_OFFERS,
       criteria,
-    ).toPromise();
+    );
   }
 }

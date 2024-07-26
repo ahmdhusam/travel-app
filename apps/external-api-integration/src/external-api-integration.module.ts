@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AmadeusService } from './services/amadeus.service';
 import { HttpModule } from '@nestjs/axios';
 import { GlobalMicroServicesProviders } from '@app/core/settings/global-microservices-providers';
-import { ExternalApiIntegrationProviders } from './enums/external-api-integration-providers.enum';
+import { ExternalApiIntegrationServiceProviders } from './enums/external-api-integration-service-providers.enum';
 
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { ExternalApiIntegrationProviders } from './enums/external-api-integratio
     ...GlobalMicroServicesProviders,
     ExternalApiIntegrationService,
     {
-      provide: ExternalApiIntegrationProviders.AMADEUS_SERVICE,
+      provide: ExternalApiIntegrationServiceProviders.AMADEUS_SERVICE,
       useClass: AmadeusService,
     },
   ],

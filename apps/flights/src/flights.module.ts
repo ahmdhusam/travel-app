@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { FlightsController } from './flights.controller';
 import { FlightsService } from './flights.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { FlightsProviders } from './enums/flights-providers.enum';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GlobalMicroServicesProviders } from '@app/core/settings/global-microservices-providers';
 import { DatabaseModule } from '@app/database';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
+import { FlightsServiceProviders } from './enums/flights-service-providers.enum';
 
 @Module({
   imports: [
@@ -15,13 +15,15 @@ import { redisStore } from 'cache-manager-redis-yet';
     DatabaseModule,
     ClientsModule.registerAsync([
       {
-        name: FlightsProviders.ExternalApiIntegrationClient,
+        name: FlightsServiceProviders.EXTERNAL_API_INTEGRATION_SERVICE_CLIENT,
         inject: [ConfigService],
         useFactory(configService: ConfigService) {
           return {
             transport: Transport.TCP,
             options: {
-              port: configService.getOrThrow('EXTERNAL_API_INTEGRATION.PORT'),
+              port: configService.getOrThrow(
+                'EXTERNAL_API_INTEGRATION_SERVICE.PORT',
+              ),
             },
           };
         },
@@ -34,8 +36,8 @@ import { redisStore } from 'cache-manager-redis-yet';
         return {
           ttl: 3 * 60 * 1000, // 3m in milli
           store: redisStore,
-          host: configService.getOrThrow('FLIGHTS.CACHE_MANAGER.HOST'),
-          port: configService.getOrThrow('FLIGHTS.CACHE_MANAGER.PORT'),
+          host: configService.getOrThrow('FLIGHTS_SERVICE.CACHE_MANAGER.HOST'),
+          port: configService.getOrThrow('FLIGHTS_SERVICE.CACHE_MANAGER.PORT'),
         };
       },
     }),

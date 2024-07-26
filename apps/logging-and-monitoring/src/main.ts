@@ -8,7 +8,7 @@ async function bootstrap() {
     LoggingAndMonitoringModule,
   );
   const configService = appContext.get(ConfigService);
-  const port = configService.getOrThrow('LOGGING_AND_MONITORING.PORT');
+  const port = configService.getOrThrow('LOGGING_AND_MONITORING_SERVICE.PORT');
   appContext.close();
 
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(

@@ -7,7 +7,7 @@ async function bootstrap() {
   const appContext =
     await NestFactory.createApplicationContext(AuthenticationModule);
   const configService = appContext.get(ConfigService);
-  const port = configService.getOrThrow('AUTHENTICATION.PORT');
+  const port = configService.getOrThrow('AUTHENTICATION_SERVICE.PORT');
   appContext.close();
 
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
