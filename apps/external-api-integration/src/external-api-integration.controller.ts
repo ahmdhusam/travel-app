@@ -2,7 +2,11 @@ import { Controller } from '@nestjs/common';
 import { ExternalApiIntegrationService } from './external-api-integration.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { ExternalApiIntegrationServiceEvents } from '@app/core/enums/external-api-integration-service-events.enum';
-import { GetFlightOffersDto } from 'apps/shared/dtos/amadeus-data-model.dto';
+import {
+  FlightOfferDto,
+  GetFlightOffersDto,
+} from 'apps/shared/dtos/amadeus-data-model.dto';
+import { Observable } from 'rxjs';
 
 @Controller()
 export class ExternalApiIntegrationController {
@@ -11,7 +15,12 @@ export class ExternalApiIntegrationController {
   ) {}
 
   @MessagePattern(ExternalApiIntegrationServiceEvents.GET_FLIGHT_OFFERS)
-  async getFlightOffers(@Payload() data: GetFlightOffersDto) {
+  getFlightOffers(@Payload() data: GetFlightOffersDto): Observable<unknown> {
     return this.externalApiIntegrationService.getFlightOffers(data);
+  }
+
+  @MessagePattern(ExternalApiIntegrationServiceEvents.GET_FLIGHT_PRICE)
+  getFlightPrice(@Payload() data: FlightOfferDto[]): Observable<unknown> {
+    return this.externalApiIntegrationService.getFlightPrice(data);
   }
 }

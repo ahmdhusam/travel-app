@@ -3,7 +3,10 @@ import { map } from 'rxjs/operators';
 import { HttpService } from '@nestjs/axios';
 import { IFlightOffersService } from '../interfaces/flight-offers-service.interface';
 import { ConfigService } from '@nestjs/config';
-import { GetFlightOffersDto } from 'apps/shared/dtos/amadeus-data-model.dto';
+import {
+  FlightOfferDto,
+  GetFlightOffersDto,
+} from 'apps/shared/dtos/amadeus-data-model.dto';
 import { Observable } from 'rxjs';
 
 @Injectable()
@@ -55,7 +58,32 @@ export class AmadeusService
       .pipe(map((response) => response.data));
   }
 
-  async getCredentials() {
+  getFlightPrice<TReq = FlightOfferDto[], TRes = unknown>(
+    flightOffers: TReq,
+  ): Observable<TRes> {
+    return this.httpService
+      .post(
+        `/v1/shopping/flight-offers/pricing`,
+        {
+          data: {
+            type: 'flight-offers-pricing',
+            flightOffers,
+          },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/vnd.amadeus+json',
+            'X-HTTP-Method-Override': 'GET',
+          },
+        },
+      )
+      .pipe(map((response) => response.data));
+  }
+
+  async getCredentials(): Promise<{
+    expires_in: number;
+    access_token: string;
+  }> {
     return this.httpService
       .post(
         '/v1/security/oauth2/token',
