@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { IFlightOffersService } from './interfaces/flight-offers-service.interface';
 import { ExternalApiIntegrationServiceProviders } from './enums/external-api-integration-service-providers.enum';
 import {
+  CreateFlightOrderDto,
   FlightOfferDto,
   GetFlightOffersDto,
 } from 'apps/shared/dtos/amadeus-data-model.dto';
@@ -20,5 +21,9 @@ export class ExternalApiIntegrationService {
 
   getFlightPrice(flightOffers: FlightOfferDto[]): Observable<unknown> {
     return this.flightOffersService.getFlightPrice(flightOffers);
+  }
+
+  createFlightOrder(flightOrder: CreateFlightOrderDto): Observable<unknown> {
+    return this.flightOffersService.createFlightOrder(flightOrder);
   }
 }

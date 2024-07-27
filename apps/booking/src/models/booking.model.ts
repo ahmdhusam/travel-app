@@ -1,7 +1,14 @@
-import { Table, Model, PrimaryKey, Column } from 'sequelize-typescript';
+import {
+  Table,
+  Model,
+  PrimaryKey,
+  Column,
+  AutoIncrement,
+} from 'sequelize-typescript';
 
 @Table
-export class HotelBooking extends Model {
+export class FlightBooking extends Model {
+  @AutoIncrement
   @PrimaryKey
   @Column
   id: number;
@@ -14,4 +21,7 @@ export class HotelBooking extends Model {
 
   @Column
   transactionId: number; // [Ref: - transaction.id]
+
+  @Column({ allowNull: false })
+  orderId: string;
 }

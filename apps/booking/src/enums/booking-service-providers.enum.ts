@@ -1,0 +1,3 @@
+export enum BookingServiceProviders {
+  EXTERNAL_API_INTEGRATION_SERVICE_CLIENT = 'BookingServiceProviders.EXTERNAL_API_INTEGRATION_SERVICE_CLIENT',
+}

@@ -4,6 +4,7 @@ import { HttpService } from '@nestjs/axios';
 import { IFlightOffersService } from '../interfaces/flight-offers-service.interface';
 import { ConfigService } from '@nestjs/config';
 import {
+  CreateFlightOrderDto,
   FlightOfferDto,
   GetFlightOffersDto,
 } from 'apps/shared/dtos/amadeus-data-model.dto';
@@ -74,6 +75,27 @@ export class AmadeusService
           headers: {
             'Content-Type': 'application/vnd.amadeus+json',
             'X-HTTP-Method-Override': 'GET',
+          },
+        },
+      )
+      .pipe(map((response) => response.data));
+  }
+
+  createFlightOrder<TReq = CreateFlightOrderDto, TRes = unknown>(
+    flightOrder: TReq,
+  ): Observable<TRes> {
+    return this.httpService
+      .post(
+        `/v1/booking/flight-orders`,
+        {
+          data: {
+            type: 'flight-order',
+            ...flightOrder,
+          },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/vnd.amadeus+json',
           },
         },
       )
