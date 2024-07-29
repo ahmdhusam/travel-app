@@ -91,7 +91,10 @@ export class AmadeusService
         {
           data: {
             type: 'flight-order',
-            ...flightOrder,
+            // @ts-expect-error not found
+            flightOffers: [flightOrder.flightOffer],
+            // @ts-expect-error not found
+            travelers: flightOrder.travelers,
           },
         },
         {

@@ -8,7 +8,7 @@ export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @MessagePattern(PaymentsServiceEvents.CREATE_ORDER)
-  async createOrder(@Payload(ParseIntPipe) amount: number) {
+  async createOrder(@Payload() amount: number) {
     return this.paymentsService.createOrder(amount);
   }
 

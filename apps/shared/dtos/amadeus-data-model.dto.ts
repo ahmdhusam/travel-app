@@ -1039,8 +1039,8 @@ export class GetFlightOfferPriceDto {
 export class CreateFlightOrderDto {
   @ValidateNested({ each: true })
   @Type(() => FlightOfferDto)
-  @IsArray()
-  flightOffers: FlightOfferDto[];
+  @IsObject()
+  flightOffer: FlightOfferDto;
 
   @ValidateNested({ each: true })
   @Type(() => TravelerDto)

@@ -13,9 +13,16 @@ export class BookingService {
   ) {}
 
   createFlightOrder(flightOrder: CreateFlightOrderDto): Observable<unknown> {
-    return this.flightsServiceClient.emit(
+    return this.flightsServiceClient.send(
       BookingServiceEvents.CREATE_FLIGHT_ORDER,
       flightOrder,
+    );
+  }
+
+  confirmFlightOrder(orderId: string): Observable<unknown> {
+    return this.flightsServiceClient.send(
+      BookingServiceEvents.CONFIRM_FLIGHT_ORDER,
+      orderId,
     );
   }
 }

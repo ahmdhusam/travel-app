@@ -24,4 +24,7 @@ export class FlightBooking extends Model {
 
   @Column({ allowNull: false })
   orderId: string;
+
+  @Column({ allowNull: false })
+  paymentOrderId: string;
 }

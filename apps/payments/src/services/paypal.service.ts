@@ -56,11 +56,7 @@ export class PaypalService implements OnModuleInit, OnModuleDestroy {
 
   checkAuthorization(orderId: string): Observable<string> {
     return this.httpService
-      .post(
-        '/v2/checkout/orders/{orderId}/authorize',
-        {},
-        { params: { orderId } },
-      )
+      .post(`/v2/checkout/orders/${orderId}/authorize`, {})
       .pipe(
         map((res) => res.data),
         map((data) => data.purchase_units[0].payments.authorizations[0].id),
@@ -69,41 +65,25 @@ export class PaypalService implements OnModuleInit, OnModuleDestroy {
 
   getOrderDetails(orderId: string): Observable<unknown> {
     return this.httpService
-      .get('/v2/checkout/orders/{orderId}', {
-        params: { orderId },
-      })
+      .get(`/v2/checkout/orders/${orderId}`)
       .pipe(map((res) => res.data));
   }
 
   getAuthorizedPaymentDetails(authorizationId: string): Observable<unknown> {
     return this.httpService
-      .get('/v2/payments/authorizations/{authorizationId}', {
-        params: { authorizationId },
-      })
+      .get(`/v2/payments/authorizations/${authorizationId}`)
       .pipe(map((res) => res.data));
   }
 
   voidAuthorization(authorizationId: string): Observable<void> {
     return this.httpService
-      .post(
-        '/v2/payments/authorizations/{authorizationId}/void',
-        {},
-        {
-          params: { authorizationId },
-        },
-      )
+      .post(`/v2/payments/authorizations/${authorizationId}/void`, {})
       .pipe(map((res) => res.data));
   }
 
   capturePayment(authorizationId: string): Observable<string> {
     return this.httpService
-      .post(
-        '/v2/payments/authorizations/{authorizationId}/capture',
-        {},
-        {
-          params: { authorizationId },
-        },
-      )
+      .post(`/v2/payments/authorizations/${authorizationId}/capture`, {})
       .pipe(map((res) => res.data.id));
   }
 
