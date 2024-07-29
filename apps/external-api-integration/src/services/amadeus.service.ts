@@ -9,6 +9,7 @@ import {
   GetFlightOffersDto,
 } from 'apps/shared/dtos/amadeus-data-model.dto';
 import { Observable } from 'rxjs';
+import { CredentialsState } from '@app/core/utils/CredentialsState';
 
 @Injectable()
 export class AmadeusService
@@ -128,19 +129,5 @@ export class AmadeusService
       )
       .pipe(map((response) => response.data))
       .toPromise();
-  }
-}
-
-class CredentialsState {
-  private expiresIn: Date = new Date();
-
-  isExpired(): boolean {
-    return this.expiresIn.getTime() < Date.now();
-  }
-
-  extendExpirationBy(seconds: number): void {
-    const currentDate = new Date();
-    currentDate.setSeconds(currentDate.getSeconds() + seconds - 5);
-    this.expiresIn = currentDate;
   }
 }

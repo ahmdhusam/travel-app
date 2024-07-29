@@ -1,28 +1,32 @@
-import { Injectable, NotImplementedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { PaypalService } from './services/paypal.service';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class PaymentsService {
-  async createOrder(amount: number) {
-    throw new NotImplementedException();
+  constructor(private readonly paypalService: PaypalService) {}
+
+  createOrder(amount: number): Observable<string> {
+    return this.paypalService.createOrder(amount);
   }
 
-  async checkAuthorization(orderId: string) {
-    throw new NotImplementedException();
+  checkAuthorization(orderId: string): Observable<string> {
+    return this.paypalService.checkAuthorization(orderId);
   }
 
-  async getOrderDetails(orderId: string) {
-    throw new NotImplementedException();
+  getOrderDetails(orderId: string): Observable<unknown> {
+    return this.paypalService.getOrderDetails(orderId);
   }
 
-  async getAuthorizedPaymentDetails(authorizationId: string) {
-    throw new NotImplementedException();
+  getAuthorizedPaymentDetails(authorizationId: string): Observable<unknown> {
+    return this.paypalService.getAuthorizedPaymentDetails(authorizationId);
   }
 
-  async voidAuthorization(authorizationId: string) {
-    throw new NotImplementedException();
+  voidAuthorization(authorizationId: string): Observable<void> {
+    return this.paypalService.voidAuthorization(authorizationId);
   }
 
-  async capturePayment(authorizationId: string) {
-    throw new NotImplementedException();
+  capturePayment(authorizationId: string): Observable<string> {
+    return this.paypalService.capturePayment(authorizationId);
   }
 }
