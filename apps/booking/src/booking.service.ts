@@ -57,7 +57,7 @@ export class BookingService {
   async confirmFlightOrder(orderId: string) {
     const flightOrder = await this.cacheManager
       .get(orderId)
-      .then((data) => JSON.parse(data));
+      .then((data: string | null) => JSON.parse(data));
     if (!isDefined(flightOrder)) throw new BadRequestException();
 
     const authorizationId = await this.paymentsServiceClient
