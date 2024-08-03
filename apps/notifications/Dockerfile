@@ -4,6 +4,8 @@ FROM node:latest
 ARG SERVICE_NAME=notifications
 ARG PORT=3000
 
+ENV SERVICE_NAME=$SERVICE_NAME
+
 # Set the working directory
 WORKDIR /app
 
@@ -28,4 +30,4 @@ COPY apps/$SERVICE_NAME/ apps/$SERVICE_NAME/
 EXPOSE $PORT
 
 # Command to run the NestJS application
-CMD ["pnpm", "run", "start:dev-notifications"]
+CMD ["pnpm", "start", "$SERVICE_NAME"]
