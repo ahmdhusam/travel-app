@@ -4,6 +4,15 @@ import { Injectable } from '@nestjs/common';
 import { FlightService } from './flight.service';
 import { FlightBooking } from '../models/booking.model';
 import { InjectModel } from '@nestjs/sequelize';
+import {
+  catchError,
+  concatMap,
+  from,
+  map,
+  Observable,
+  switchMap,
+  throwError,
+} from 'rxjs';
 
 @Injectable()
 export class OrderService {
@@ -14,38 +23,39 @@ export class OrderService {
     private readonly flightBookingRepository: typeof FlightBooking,
   ) {}
 
-  async createOrder(totalPrice: string): Promise<{ id: string }> {
-    const orderId = await this.paymentService.createOrder(totalPrice);
-    return { id: orderId };
+  createOrder(totalPrice: string): Observable<{ id: string }> {
+    return this.paymentService
+      .createOrder(totalPrice)
+      .pipe(map((orderId) => ({ id: orderId })));
   }
 
-  async checkAuthorization(paymentOrderId: string): Promise<{ id: string }> {
-    const authorizationId =
-      await this.paymentService.checkAuthorization(paymentOrderId);
-    return { id: authorizationId };
+  checkAuthorization(paymentOrderId: string): Observable<{ id: string }> {
+    return this.paymentService
+      .checkAuthorization(paymentOrderId)
+      .pipe(map((authorizationId) => ({ id: authorizationId })));
   }
 
-  async finalizeOrderAndSave(
+  finalizeOrderAndSave(
     paymentOrderId: string,
     authorizationId: string,
     flightOfferDetails: CreateFlightOrderDto,
-  ): Promise<{ status: string }> {
-    try {
-      const flightOrder =
-        await this.flightService.createFlightOrder(flightOfferDetails);
-
-      await this.flightBookingRepository.create({
-        flightOrderId: flightOrder.id,
-        paymentOrderId: paymentOrderId,
-      });
-
-      await this.paymentService.capturePayment(authorizationId);
-    } catch (e) {
-      await this.paymentService.voidPayment(authorizationId);
-
-      throw e;
-    }
-
-    return { status: 'success' };
+  ): Observable<void> {
+    return this.flightService.createFlightOrder(flightOfferDetails).pipe(
+      concatMap((flightOrder) =>
+        from(
+          this.flightBookingRepository.create({
+            flightOrderId: flightOrder.id,
+            paymentOrderId: paymentOrderId,
+          }),
+        ).pipe(
+          concatMap(() => this.paymentService.capturePayment(authorizationId)),
+        ),
+      ),
+      catchError((err) =>
+        this.paymentService
+          .voidPayment(authorizationId)
+          .pipe(switchMap(() => throwError(() => err))),
+      ),
+    );
   }
 }

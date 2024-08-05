@@ -6,6 +6,7 @@ import {
 } from 'apps/shared/dtos/amadeus-data-model.dto';
 import { BookingServiceProviders } from '../enums/booking-service-providers.enum';
 import { ClientProxy } from '@nestjs/microservices';
+import { map, Observable } from 'rxjs';
 
 @Injectable()
 export class FlightService {
@@ -14,25 +15,17 @@ export class FlightService {
     private readonly flightsServiceClient: ClientProxy,
   ) {}
 
-  async getFlightPrice(flightOffer: FlightOfferDto): Promise<FlightOfferDto> {
-    const {
-      data: {
-        flightOffers: [flightOfferPrice],
-      },
-    } = await this.flightsServiceClient
+  getFlightPrice(flightOffer: FlightOfferDto): Observable<FlightOfferDto> {
+    return this.flightsServiceClient
       .send(FlightsServiceEvents.GET_FLIGHT_PRICE, [flightOffer])
-      .toPromise();
-
-    return flightOfferPrice;
+      .pipe(map((res) => res.data.flightOffers[0]));
   }
 
-  async createFlightOrder(
+  createFlightOrder(
     flightOfferDetails: CreateFlightOrderDto,
-  ): Promise<{ id: string }> {
-    const flightOfferId = await this.flightsServiceClient
+  ): Observable<{ id: string }> {
+    return this.flightsServiceClient
       .send(FlightsServiceEvents.CREATE_FLIGHT_ORDER, flightOfferDetails)
-      .toPromise();
-
-    return { id: flightOfferId };
+      .pipe(map((flightOfferId) => ({ id: flightOfferId })));
   }
 }
