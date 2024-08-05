@@ -5,6 +5,7 @@ import { DatabaseModule } from '@app/database';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { PaypalService } from './services/paypal.service';
+import { PaymentFeesService } from './services/payment-fees.service';
 
 @Module({
   imports: [
@@ -16,6 +17,6 @@ import { PaypalService } from './services/paypal.service';
     }),
   ],
   controllers: [PaymentsController],
-  providers: [PaymentsService, PaypalService],
+  providers: [PaymentsService, PaypalService, PaymentFeesService],
 })
 export class PaymentsModule {}
