@@ -4,6 +4,7 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 import { FlightSearchCachingInterceptor } from './flight-search-caching.interceptor';
 import { FlightsServiceEvents } from '@app/core/enums/flights-service-events.enum';
 import {
+  CreateFlightOrderDto,
   FlightOfferDto,
   GetFlightOffersDto,
 } from 'apps/shared/dtos/amadeus-data-model.dto';
@@ -23,5 +24,12 @@ export class FlightsController {
   @MessagePattern(FlightsServiceEvents.GET_FLIGHT_PRICE)
   getFlightPrice(@Payload() data: FlightOfferDto[]): Observable<unknown> {
     return this.flightsService.getFlightPrice(data);
+  }
+
+  @MessagePattern(FlightsServiceEvents.CREATE_FLIGHT_ORDER)
+  createFlightOrder(
+    @Payload() flightOfferDetails: CreateFlightOrderDto,
+  ): Observable<string> {
+    return this.flightsService.createFlightOrder(flightOfferDetails);
   }
 }

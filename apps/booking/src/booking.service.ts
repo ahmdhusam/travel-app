@@ -1,95 +1,48 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateFlightOrderDto } from 'apps/shared/dtos/amadeus-data-model.dto';
-import { BookingServiceProviders } from './enums/booking-service-providers.enum';
-import { ClientProxy } from '@nestjs/microservices';
-import { ExternalApiIntegrationServiceEvents } from '@app/core/enums/external-api-integration-service-events.enum';
-import { InjectModel } from '@nestjs/sequelize';
-import { FlightBooking } from './models/booking.model';
-import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
-import { PaymentsServiceEvents } from '@app/core/enums/payments-service.events.enum';
-import { FlightsServiceEvents } from '@app/core/enums/flights-service-events.enum';
-import { isDefined } from 'class-validator';
+import { CacheService } from './services/cache.service';
+import { OrderService } from './services/order.service';
+import { FlightService } from './services/flight.service';
 
 @Injectable()
 export class BookingService {
   constructor(
-    @Inject(BookingServiceProviders.EXTERNAL_API_INTEGRATION_SERVICE_CLIENT)
-    private readonly externalApiIntegrationServiceClient: ClientProxy,
-    @Inject(BookingServiceProviders.FLIGHTS_SERVICE_CLIENT)
-    private readonly flightsServiceClient: ClientProxy,
-    @Inject(BookingServiceProviders.PAYMENTS_SERVICE_CLIENT)
-    private readonly paymentsServiceClient: ClientProxy,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    @InjectModel(FlightBooking)
-    private readonly flightBookingRepository: typeof FlightBooking,
+    private readonly flightService: FlightService,
+    private readonly orderService: OrderService,
+    private readonly cacheService: CacheService,
   ) {}
 
   async createFlightOrder(flightOrder: CreateFlightOrderDto): Promise<unknown> {
     // TODO: “Remember to create a transaction and complete the checkout process.
     // TODO: add paypal fees
 
-    const {
-      data: {
-        flightOffers: [flightOfferPrice],
-      },
-    } = await this.flightsServiceClient
-      .send(FlightsServiceEvents.GET_FLIGHT_PRICE, [flightOrder.flightOffer])
-      .toPromise();
-
-    const orderId = await this.paymentsServiceClient
-      .send(
-        PaymentsServiceEvents.CREATE_ORDER,
-        parseFloat(flightOfferPrice.price.total),
-      )
-      .toPromise();
-
-    await this.cacheManager.set(
-      orderId,
-      JSON.stringify({
-        flightOffer: flightOfferPrice,
-        travelers: flightOrder.travelers,
-      } as CreateFlightOrderDto),
+    const flightOfferPrice = await this.flightService.getFlightPrice(
+      flightOrder.flightOffer,
     );
 
-    return orderId;
+    const paymentOrder = await this.orderService.createOrder(
+      flightOfferPrice.price.total,
+    );
+
+    await this.cacheService.setFlightOfferDetails(paymentOrder.id, {
+      flightOffer: flightOfferPrice,
+      travelers: flightOrder.travelers,
+    });
+
+    return paymentOrder;
   }
 
-  async confirmFlightOrder(orderId: string) {
-    const flightOrder = await this.cacheManager
-      .get(orderId)
-      .then((data: string | null) => JSON.parse(data));
-    if (!isDefined(flightOrder)) throw new BadRequestException();
+  async confirmFlightOrder(paymentOrderId: string) {
+    const flightOfferDetails =
+      await this.cacheService.getFlightOfferDetailsOrThrow(paymentOrderId);
 
-    const authorizationId = await this.paymentsServiceClient
-      .send(PaymentsServiceEvents.CHECK_AUTHORIZATION, orderId)
-      .toPromise();
+    const authorization =
+      await this.orderService.checkAuthorization(paymentOrderId);
 
-    try {
-      const {
-        data: { id: flightOrderId },
-      } = await this.externalApiIntegrationServiceClient
-        .send(
-          ExternalApiIntegrationServiceEvents.CREATE_FLIGHT_ORDER,
-          flightOrder,
-        )
-        .toPromise();
-
-      await this.flightBookingRepository.create({
-        orderId: flightOrderId,
-        paymentOrderId: orderId,
-      });
-
-      await this.paymentsServiceClient
-        .send(PaymentsServiceEvents.CAPTURE_PAYMENT, authorizationId)
-        .toPromise();
-    } catch (e) {
-      await this.paymentsServiceClient
-        .send(PaymentsServiceEvents.VOID_AUTHORIZATION, authorizationId)
-        .toPromise();
-
-      throw e;
-    }
-
-    return { status: 'success' };
+    return this.orderService.finalizeOrderAndSave(
+      paymentOrderId,
+      authorization.id,
+      flightOfferDetails,
+    );
   }
 }

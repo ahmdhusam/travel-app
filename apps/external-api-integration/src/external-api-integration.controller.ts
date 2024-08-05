@@ -26,7 +26,7 @@ export class ExternalApiIntegrationController {
   }
 
   @MessagePattern(ExternalApiIntegrationServiceEvents.CREATE_FLIGHT_ORDER)
-  createFlightOrder(flightOrder: CreateFlightOrderDto): Observable<unknown> {
+  createFlightOrder(@Payload() flightOrder: CreateFlightOrderDto): Observable<unknown> {
     return this.externalApiIntegrationService.createFlightOrder(flightOrder);
   }
 }

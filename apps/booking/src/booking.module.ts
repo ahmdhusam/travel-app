@@ -9,6 +9,10 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { BookingServiceProviders } from './enums/booking-service-providers.enum';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
+import { CacheService } from './services/cache.service';
+import { FlightService } from './services/flight.service';
+import { OrderService } from './services/order.service';
+import { PaymentService } from './services/payment.service';
 
 @Module({
   imports: [
@@ -73,6 +77,6 @@ import { redisStore } from 'cache-manager-redis-yet';
     }),
   ],
   controllers: [BookingController],
-  providers: [BookingService],
+  providers: [BookingService, CacheService, FlightService, OrderService, PaymentService],
 })
 export class BookingModule {}

@@ -23,7 +23,7 @@ export class FlightBooking extends Model {
   transactionId: number; // [Ref: - transaction.id]
 
   @Column({ allowNull: false })
-  orderId: string;
+  flightOrderId: string;
 
   @Column({ allowNull: false })
   paymentOrderId: string;
