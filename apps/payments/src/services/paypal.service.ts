@@ -3,12 +3,14 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { map, Observable } from 'rxjs';
+import { PaymentFeesService } from './payment-fees.service';
 
 @Injectable()
 export class PaypalService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
+    private readonly paymentFeesService: PaymentFeesService,
   ) {}
 
   onModuleInit() {
@@ -46,7 +48,9 @@ export class PaypalService implements OnModuleInit, OnModuleDestroy {
           {
             amount: {
               currency_code: 'USD',
-              value: amount.toString(),
+              value: this.paymentFeesService
+                .calculateTransactionFees(amount)
+                .toFixed(2),
             },
           },
         ],
