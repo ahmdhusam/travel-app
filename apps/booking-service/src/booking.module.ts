@@ -13,6 +13,7 @@ import { CacheService } from './services/cache.service';
 import { FlightsSearchService } from './services/flights-search.service';
 import { OrderService } from './services/order.service';
 import { PaymentService } from './services/payment.service';
+import { ExternalApiIntegrationService } from './services/external-api-integration.service';
 
 @Module({
   imports: [
@@ -83,6 +84,7 @@ import { PaymentService } from './services/payment.service';
     FlightsSearchService,
     OrderService,
     PaymentService,
+    ExternalApiIntegrationService,
   ],
 })
 export class BookingModule {}

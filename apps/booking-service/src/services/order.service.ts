@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { FlightsSearchService } from './flights-search.service';
 import { FlightBooking } from '../models/booking.model';
 import { InjectModel } from '@nestjs/sequelize';
+import { ExternalApiIntegrationService } from './external-api-integration.service';
 
 @Injectable()
 export class OrderService {
@@ -12,6 +13,7 @@ export class OrderService {
     private readonly flightService: FlightsSearchService,
     @InjectModel(FlightBooking)
     private readonly flightBookingRepository: typeof FlightBooking,
+    private readonly externalApiIntegrationService: ExternalApiIntegrationService,
   ) {}
 
   async createOrder(totalPrice: string): Promise<{ id: string }> {
@@ -32,7 +34,9 @@ export class OrderService {
   ): Promise<{ status: string }> {
     try {
       const flightOrder =
-        await this.flightService.createFlightOrder(flightOfferDetails);
+        await this.externalApiIntegrationService.createFlightOrder(
+          flightOfferDetails,
+        );
 
       await this.flightBookingRepository.create({
         flightOrderId: flightOrder.id,

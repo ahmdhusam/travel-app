@@ -1,9 +1,6 @@
 import { FlightsSearchServiceEvents } from '@app/core/enums/flights-search-service-events.enum';
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  CreateFlightOrderDto,
-  FlightOfferDto,
-} from 'apps/shared/dtos/amadeus-data-model.dto';
+import { FlightOfferDto } from 'apps/shared/dtos/amadeus-data-model.dto';
 import { BookingServiceProviders } from '../enums/booking-service-providers.enum';
 import { ClientProxy } from '@nestjs/microservices';
 
@@ -24,15 +21,5 @@ export class FlightsSearchService {
       .toPromise();
 
     return flightOfferPrice;
-  }
-
-  async createFlightOrder(
-    flightOfferDetails: CreateFlightOrderDto,
-  ): Promise<{ id: string }> {
-    const flightOfferId = await this.flightsSearchServiceClient
-      .send(FlightsSearchServiceEvents.CREATE_FLIGHT_ORDER, flightOfferDetails)
-      .toPromise();
-
-    return { id: flightOfferId };
   }
 }

@@ -2,12 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { FlightsSearchServiceProviders } from './enums/flights-search-service-providers.enum';
 import {
-  CreateFlightOrderDto,
   FlightOfferDto,
   GetFlightOffersDto,
 } from 'apps/shared/dtos/amadeus-data-model.dto';
 import { ExternalApiIntegrationServiceEvents } from '@app/core/enums/external-api-integration-service-events.enum';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class FlightsSearchService {
@@ -30,16 +29,5 @@ export class FlightsSearchService {
       ExternalApiIntegrationServiceEvents.GET_FLIGHT_PRICE,
       flightOffers,
     );
-  }
-
-  createFlightOrder(
-    flightOfferDetails: CreateFlightOrderDto,
-  ): Observable<string> {
-    return this.externalApiIntegrationServiceClient
-      .send(
-        ExternalApiIntegrationServiceEvents.CREATE_FLIGHT_ORDER,
-        flightOfferDetails,
-      )
-      .pipe(map((flightOrder) => flightOrder.data.id));
   }
 }
