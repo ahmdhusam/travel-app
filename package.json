@@ -18,7 +18,6 @@
     "start:dev-logging-and-monitoring": "nest start --watch logging-and-monitoring",
     "start:dev-notifications": "nest start --watch notifications",
     "start:dev-payments": "nest start --watch payments",
-    "start:dev-transactions": "nest start --watch transactions",
     "start:dev-travel-app": "nest start --watch travel-app",
     "start:dev-users": "nest start --watch users",
     "start:dev-flights": "nest start --watch flights",

@@ -98,15 +98,6 @@
         "tsConfigPath": "apps/payments/tsconfig.app.json"
       }
     },
-    "transactions": {
-      "type": "application",
-      "root": "apps/transactions",
-      "entryFile": "main",
-      "sourceRoot": "apps/transactions/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/transactions/tsconfig.app.json"
-      }
-    },
     "users": {
       "type": "application",
       "root": "apps/users",
