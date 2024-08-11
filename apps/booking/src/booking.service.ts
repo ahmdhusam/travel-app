@@ -3,7 +3,6 @@ import { CreateFlightOrderDto } from 'apps/shared/dtos/amadeus-data-model.dto';
 import { CacheService } from './services/cache.service';
 import { OrderService } from './services/order.service';
 import { FlightService } from './services/flight.service';
-import { map, Observable, switchMap } from 'rxjs';
 
 @Injectable()
 export class BookingService {
@@ -13,46 +12,37 @@ export class BookingService {
     private readonly cacheService: CacheService,
   ) {}
 
-  createFlightOrder(
-    flightOrder: CreateFlightOrderDto,
-  ): Observable<{ id: string }> {
+  async createFlightOrder(flightOrder: CreateFlightOrderDto): Promise<unknown> {
     // TODO: “Remember to create a transaction and complete the checkout process.
+    // TODO: add paypal fees
 
-    return this.flightService.getFlightPrice(flightOrder.flightOffer).pipe(
-      switchMap((flightOfferPrice) =>
-        this.orderService.createOrder(flightOfferPrice.price.total).pipe(
-          switchMap((paymentOrder) =>
-            this.cacheService
-              .setFlightOfferDetails(paymentOrder.id, {
-                flightOffer: flightOfferPrice,
-                travelers: flightOrder.travelers,
-              })
-              .pipe(map(() => paymentOrder)),
-          ),
-        ),
-      ),
+    const flightOfferPrice = await this.flightService.getFlightPrice(
+      flightOrder.flightOffer,
     );
+
+    const paymentOrder = await this.orderService.createOrder(
+      flightOfferPrice.price.total,
+    );
+
+    await this.cacheService.setFlightOfferDetails(paymentOrder.id, {
+      flightOffer: flightOfferPrice,
+      travelers: flightOrder.travelers,
+    });
+
+    return paymentOrder;
   }
 
-  confirmFlightOrder(paymentOrderId: string): Observable<{ status: string }> {
-    return this.cacheService
-      .getFlightOfferDetailsOrThrow(paymentOrderId)
-      .pipe(
-        switchMap((flightOfferDetails) =>
-          this.orderService
-            .checkAuthorization(paymentOrderId)
-            .pipe(
-              switchMap((authorization) =>
-                this.orderService
-                  .finalizeOrderAndSave(
-                    paymentOrderId,
-                    authorization.id,
-                    flightOfferDetails,
-                  )
-                  .pipe(map((_) => ({ status: 'success' }))),
-              ),
-            ),
-        ),
-      );
+  async confirmFlightOrder(paymentOrderId: string) {
+    const flightOfferDetails =
+      await this.cacheService.getFlightOfferDetailsOrThrow(paymentOrderId);
+
+    const authorization =
+      await this.orderService.checkAuthorization(paymentOrderId);
+
+    return this.orderService.finalizeOrderAndSave(
+      paymentOrderId,
+      authorization.id,
+      flightOfferDetails,
+    );
   }
 }
