@@ -28,6 +28,9 @@ import { ExternalApiIntegrationService } from './services/external-api-integrati
           return {
             transport: Transport.TCP,
             options: {
+              host: configService.getOrThrow(
+                'EXTERNAL_API_INTEGRATION_SERVICE.HOST',
+              ),
               port: configService.getOrThrow(
                 'EXTERNAL_API_INTEGRATION_SERVICE.PORT',
               ),
@@ -44,6 +47,7 @@ import { ExternalApiIntegrationService } from './services/external-api-integrati
           return {
             transport: Transport.TCP,
             options: {
+              host: configService.getOrThrow('FLIGHTS_SEARCH_SERVICE.HOST'),
               port: configService.getOrThrow('FLIGHTS_SEARCH_SERVICE.PORT'),
             },
           };
@@ -58,6 +62,7 @@ import { ExternalApiIntegrationService } from './services/external-api-integrati
           return {
             transport: Transport.TCP,
             options: {
+              host: configService.getOrThrow('PAYMENTS_SERVICE.HOST'),
               port: configService.getOrThrow('PAYMENTS_SERVICE.PORT'),
             },
           };

@@ -15,6 +15,7 @@ import { ConfigService } from '@nestjs/config';
           return {
             transport: Transport.TCP,
             options: {
+              host: configService.getOrThrow('BOOKING_SERVICE.HOST'),
               port: configService.getOrThrow('BOOKING_SERVICE.PORT'),
             },
           };

@@ -21,6 +21,9 @@ import { FlightsSearchServiceProviders } from './enums/flights-search-service-pr
           return {
             transport: Transport.TCP,
             options: {
+              host: configService.getOrThrow(
+                'EXTERNAL_API_INTEGRATION_SERVICE.HOST',
+              ),
               port: configService.getOrThrow(
                 'EXTERNAL_API_INTEGRATION_SERVICE.PORT',
               ),
