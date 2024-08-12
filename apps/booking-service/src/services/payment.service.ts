@@ -2,6 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { BookingServiceProviders } from '../enums/booking-service-providers.enum';
 import { ClientProxy } from '@nestjs/microservices';
 import { PaymentsServiceEvents } from '@app/core/enums/payments-service.events.enum';
+import { PaymentOrderSerialize } from 'apps/shared/dtos/payment-order.serialize';
+import { PaymentAuthorizationSerialize } from 'apps/shared/dtos/payment-authorization.serialize';
 
 @Injectable()
 export class PaymentService {
@@ -10,13 +12,15 @@ export class PaymentService {
     private readonly paymentsServiceClient: ClientProxy,
   ) {}
 
-  createOrder(amount: string): Promise<string> {
+  createOrder(amount: string): Promise<PaymentOrderSerialize> {
     return this.paymentsServiceClient
       .send(PaymentsServiceEvents.CREATE_ORDER, parseFloat(amount))
       .toPromise();
   }
 
-  checkAuthorization(paymentOrderId: string): Promise<string> {
+  checkAuthorization(
+    paymentOrderId: string,
+  ): Promise<PaymentAuthorizationSerialize> {
     return this.paymentsServiceClient
       .send(PaymentsServiceEvents.CHECK_AUTHORIZATION, paymentOrderId)
       .toPromise();

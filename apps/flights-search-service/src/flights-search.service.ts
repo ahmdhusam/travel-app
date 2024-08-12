@@ -2,7 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { FlightsSearchServiceProviders } from './enums/flights-search-service-providers.enum';
 import {
-  FlightOfferDto,
+  FlightOfferPriceSerialize,
+  FlightOffersSerialize,
+  GetFlightOfferPriceDto,
   GetFlightOffersDto,
 } from 'apps/shared/dtos/amadeus-data-model.dto';
 import { ExternalApiIntegrationServiceEvents } from '@app/core/enums/external-api-integration-service-events.enum';
@@ -17,17 +19,21 @@ export class FlightsSearchService {
     private readonly externalApiIntegrationServiceClient: ClientProxy,
   ) {}
 
-  getFlightOffers(criteria: GetFlightOffersDto): Observable<unknown> {
+  getFlightOffers(
+    criteria: GetFlightOffersDto,
+  ): Observable<FlightOffersSerialize> {
     return this.externalApiIntegrationServiceClient.send(
       ExternalApiIntegrationServiceEvents.GET_FLIGHT_OFFERS,
       criteria,
     );
   }
 
-  getFlightPrice(flightOffers: FlightOfferDto[]): Observable<unknown> {
+  getFlightPrice(
+    flightOfferPriceDto: GetFlightOfferPriceDto,
+  ): Observable<FlightOfferPriceSerialize> {
     return this.externalApiIntegrationServiceClient.send(
       ExternalApiIntegrationServiceEvents.GET_FLIGHT_PRICE,
-      flightOffers,
+      flightOfferPriceDto,
     );
   }
 }

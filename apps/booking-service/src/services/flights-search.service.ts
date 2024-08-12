@@ -1,6 +1,9 @@
 import { FlightsSearchServiceEvents } from '@app/core/enums/flights-search-service-events.enum';
 import { Inject, Injectable } from '@nestjs/common';
-import { FlightOfferDto } from 'apps/shared/dtos/amadeus-data-model.dto';
+import {
+  FlightOfferPriceSerialize,
+  GetFlightOfferPriceDto,
+} from 'apps/shared/dtos/amadeus-data-model.dto';
 import { BookingServiceProviders } from '../enums/booking-service-providers.enum';
 import { ClientProxy } from '@nestjs/microservices';
 
@@ -11,15 +14,11 @@ export class FlightsSearchService {
     private readonly flightsSearchServiceClient: ClientProxy,
   ) {}
 
-  async getFlightPrice(flightOffer: FlightOfferDto): Promise<FlightOfferDto> {
-    const {
-      data: {
-        flightOffers: [flightOfferPrice],
-      },
-    } = await this.flightsSearchServiceClient
-      .send(FlightsSearchServiceEvents.GET_FLIGHT_PRICE, [flightOffer])
+  getFlightPrice(
+    flightOfferPriceDto: GetFlightOfferPriceDto,
+  ): Promise<FlightOfferPriceSerialize> {
+    return this.flightsSearchServiceClient
+      .send(FlightsSearchServiceEvents.GET_FLIGHT_PRICE, flightOfferPriceDto)
       .toPromise();
-
-    return flightOfferPrice;
   }
 }

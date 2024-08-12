@@ -9,18 +9,18 @@ export class CacheService {
 
   setFlightOfferDetails(
     paymentOrderId: string,
-    flightOfferOrder: CreateFlightOrderDto,
+    flightOrderDto: CreateFlightOrderDto,
   ): Promise<void> {
-    return this.cacheManager.set(paymentOrderId, flightOfferOrder);
+    return this.cacheManager.set(paymentOrderId, flightOrderDto);
   }
 
   async getFlightOfferDetailsOrThrow(
     paymentOrderId: string,
   ): Promise<CreateFlightOrderDto> {
-    const flightOfferDetails: CreateFlightOrderDto =
+    const flightOrderDto: CreateFlightOrderDto =
       await this.cacheManager.get(paymentOrderId);
-    if (!isDefined(flightOfferDetails)) throw new BadRequestException();
+    if (!isDefined(flightOrderDto)) throw new BadRequestException();
 
-    return flightOfferDetails;
+    return flightOrderDto;
   }
 }

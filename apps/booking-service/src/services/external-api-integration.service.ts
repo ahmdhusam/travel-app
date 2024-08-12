@@ -1,9 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { BookingServiceProviders } from '../enums/booking-service-providers.enum';
 import { ClientProxy } from '@nestjs/microservices';
-import { CreateFlightOrderDto } from 'apps/shared/dtos/amadeus-data-model.dto';
+import {
+  CreateFlightOrderDto,
+  FlightOrderSerialize,
+} from 'apps/shared/dtos/amadeus-data-model.dto';
 import { ExternalApiIntegrationServiceEvents } from '@app/core/enums/external-api-integration-service-events.enum';
-import { map } from 'rxjs';
 
 @Injectable()
 export class ExternalApiIntegrationService {
@@ -13,14 +15,13 @@ export class ExternalApiIntegrationService {
   ) {}
 
   createFlightOrder(
-    flightOrder: CreateFlightOrderDto,
-  ): Promise<{ id: string }> {
+    flightOrderDto: CreateFlightOrderDto,
+  ): Promise<FlightOrderSerialize> {
     return this.externalApiIntegrationServiceClient
       .send(
         ExternalApiIntegrationServiceEvents.CREATE_FLIGHT_ORDER,
-        flightOrder,
+        flightOrderDto,
       )
-      .pipe(map((flightOrder) => ({ id: flightOrder.data.id })))
       .toPromise();
   }
 }

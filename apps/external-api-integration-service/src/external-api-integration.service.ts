@@ -3,7 +3,10 @@ import { IFlightOffersService } from './interfaces/flight-offers-service.interfa
 import { ExternalApiIntegrationServiceProviders } from './enums/external-api-integration-service-providers.enum';
 import {
   CreateFlightOrderDto,
-  FlightOfferDto,
+  FlightOfferPriceSerialize,
+  FlightOffersSerialize,
+  FlightOrderSerialize,
+  GetFlightOfferPriceDto,
   GetFlightOffersDto,
 } from 'apps/shared/dtos/amadeus-data-model.dto';
 import { Observable } from 'rxjs';
@@ -15,15 +18,21 @@ export class ExternalApiIntegrationService {
     private readonly flightOffersService: IFlightOffersService,
   ) {}
 
-  getFlightOffers(criteria: GetFlightOffersDto): Observable<unknown> {
+  getFlightOffers(
+    criteria: GetFlightOffersDto,
+  ): Observable<FlightOffersSerialize> {
     return this.flightOffersService.getFlightOffers(criteria);
   }
 
-  getFlightPrice(flightOffers: FlightOfferDto[]): Observable<unknown> {
-    return this.flightOffersService.getFlightPrice(flightOffers);
+  getFlightPrice(
+    flightOfferPriceDto: GetFlightOfferPriceDto,
+  ): Observable<FlightOfferPriceSerialize> {
+    return this.flightOffersService.getFlightPrice(flightOfferPriceDto);
   }
 
-  createFlightOrder(flightOrder: CreateFlightOrderDto): Observable<unknown> {
-    return this.flightOffersService.createFlightOrder(flightOrder);
+  createFlightOrder(
+    flightOrderDto: CreateFlightOrderDto,
+  ): Observable<FlightOrderSerialize> {
+    return this.flightOffersService.createFlightOrder(flightOrderDto);
   }
 }

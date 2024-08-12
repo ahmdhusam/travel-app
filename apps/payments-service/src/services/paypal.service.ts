@@ -4,6 +4,8 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { map, Observable } from 'rxjs';
 import { PaymentFeesService } from './payment-fees.service';
+import { PaymentOrderSerialize } from 'apps/shared/dtos/payment-order.serialize';
+import { PaymentAuthorizationSerialize } from 'apps/shared/dtos/payment-authorization.serialize';
 
 @Injectable()
 export class PaypalService implements OnModuleInit, OnModuleDestroy {
@@ -40,7 +42,7 @@ export class PaypalService implements OnModuleInit, OnModuleDestroy {
     this.httpService.axiosRef.interceptors.request.clear();
   }
 
-  createOrder(amount: number): Observable<string> {
+  createOrder(amount: number): Observable<PaymentOrderSerialize> {
     return this.httpService
       .post('/v2/checkout/orders', {
         intent: 'AUTHORIZE',
@@ -55,15 +57,17 @@ export class PaypalService implements OnModuleInit, OnModuleDestroy {
           },
         ],
       })
-      .pipe(map((res) => res.data.id));
+      .pipe(map((res) => ({ id: res.data.id })));
   }
 
-  checkAuthorization(orderId: string): Observable<string> {
+  checkAuthorization(
+    orderId: string,
+  ): Observable<PaymentAuthorizationSerialize> {
     return this.httpService
       .post(`/v2/checkout/orders/${orderId}/authorize`, {})
       .pipe(
-        map((res) => res.data),
-        map((data) => data.purchase_units[0].payments.authorizations[0].id),
+        map((res) => res.data.purchase_units[0].payments.authorizations[0]),
+        map((authorization) => ({ id: authorization.id })),
       );
   }
 
@@ -82,13 +86,13 @@ export class PaypalService implements OnModuleInit, OnModuleDestroy {
   voidAuthorization(authorizationId: string): Observable<void> {
     return this.httpService
       .post(`/v2/payments/authorizations/${authorizationId}/void`, {})
-      .pipe(map((res) => res.data));
+      .pipe(map(() => {}));
   }
 
-  capturePayment(authorizationId: string): Observable<string> {
+  capturePayment(authorizationId: string): Observable<void> {
     return this.httpService
       .post(`/v2/payments/authorizations/${authorizationId}/capture`, {})
-      .pipe(map((res) => res.data.id));
+      .pipe(map(() => {}));
   }
 
   // /v1/oauth2/token

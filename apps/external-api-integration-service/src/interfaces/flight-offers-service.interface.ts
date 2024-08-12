@@ -1,7 +1,17 @@
+import {
+  CreateFlightOrderDto,
+  FlightOfferPriceSerialize,
+  FlightOffersSerialize,
+  FlightOrderSerialize,
+  GetFlightOfferPriceDto,
+  GetFlightOffersDto,
+} from 'apps/shared/dtos/amadeus-data-model.dto';
 import { Observable } from 'rxjs';
 
 export interface IFlightOffersService {
-  getFlightOffers<TReq, TRes>(_: TReq): Observable<TRes>;
-  getFlightPrice<TReq, TRes>(_: TReq): Observable<TRes>;
-  createFlightOrder<TReq, TRes>(_: TReq): Observable<TRes>;
+  getFlightOffers(_: GetFlightOffersDto): Observable<FlightOffersSerialize>;
+  getFlightPrice(
+    _: GetFlightOfferPriceDto,
+  ): Observable<FlightOfferPriceSerialize>;
+  createFlightOrder(_: CreateFlightOrderDto): Observable<FlightOrderSerialize>;
 }

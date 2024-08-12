@@ -5,7 +5,10 @@ import { IFlightOffersService } from '../interfaces/flight-offers-service.interf
 import { ConfigService } from '@nestjs/config';
 import {
   CreateFlightOrderDto,
-  FlightOfferDto,
+  FlightOfferPriceSerialize,
+  FlightOffersSerialize,
+  FlightOrderSerialize,
+  GetFlightOfferPriceDto,
   GetFlightOffersDto,
 } from 'apps/shared/dtos/amadeus-data-model.dto';
 import { Observable } from 'rxjs';
@@ -47,29 +50,29 @@ export class AmadeusService
     this.httpService.axiosRef.interceptors.request.clear();
   }
 
-  getFlightOffers<TReq = GetFlightOffersDto, TRes = unknown>(
-    searchCriteria: TReq,
-  ): Observable<TRes> {
+  getFlightOffers(
+    searchCriteria: GetFlightOffersDto,
+  ): Observable<FlightOffersSerialize> {
     return this.httpService
-      .post(`/v2/shopping/flight-offers`, searchCriteria, {
-        headers: {
-          'Content-Type': 'application/vnd.amadeus+json',
-          'X-HTTP-Method-Override': 'GET',
+      .get(`/v2/shopping/flight-offers`, {
+        params: {
+          currencyCode: 'USD',
+          ...searchCriteria,
         },
       })
       .pipe(map((response) => response.data));
   }
 
-  getFlightPrice<TReq = FlightOfferDto[], TRes = unknown>(
-    flightOffers: TReq,
-  ): Observable<TRes> {
+  getFlightPrice(
+    flightOfferPriceDto: GetFlightOfferPriceDto,
+  ): Observable<FlightOfferPriceSerialize> {
     return this.httpService
       .post(
         `/v1/shopping/flight-offers/pricing`,
         {
           data: {
             type: 'flight-offers-pricing',
-            flightOffers,
+            flightOffers: [flightOfferPriceDto.flightOffer],
           },
         },
         {
@@ -79,22 +82,24 @@ export class AmadeusService
           },
         },
       )
-      .pipe(map((response) => response.data));
+      .pipe(
+        map((response) => ({
+          flightOffer: response.data.data.flightOffers[0],
+        })),
+      );
   }
 
-  createFlightOrder<TReq = CreateFlightOrderDto, TRes = unknown>(
-    flightOrder: TReq,
-  ): Observable<TRes> {
+  createFlightOrder(
+    flightOrderDto: CreateFlightOrderDto,
+  ): Observable<FlightOrderSerialize> {
     return this.httpService
       .post(
         `/v1/booking/flight-orders`,
         {
           data: {
             type: 'flight-order',
-            // @ts-expect-error not found
-            flightOffers: [flightOrder.flightOffer],
-            // @ts-expect-error not found
-            travelers: flightOrder.travelers,
+            flightOffers: [flightOrderDto.flightOffer],
+            travelers: flightOrderDto.travelers,
           },
         },
         {
@@ -103,7 +108,7 @@ export class AmadeusService
           },
         },
       )
-      .pipe(map((response) => response.data));
+      .pipe(map((response) => ({ id: response.data.data.id })));
   }
 
   async getCredentials(): Promise<{
