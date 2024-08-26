@@ -2,10 +2,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Transaction } from '../models/transaction.model';
 import { CreateFlightOrderDto } from 'apps/shared/dtos/amadeus-data-model.dto';
 import { isDefined } from 'class-validator';
+import { InjectModel } from '@nestjs/sequelize';
 
 @Injectable()
 export class TransactionService {
-  constructor(private readonly transactionRepository: typeof Transaction) {}
+  constructor(
+    @InjectModel(Transaction)
+    private readonly transactionRepository: typeof Transaction) {}
 
   async createTransaction(
     paymentOrderId: string,
