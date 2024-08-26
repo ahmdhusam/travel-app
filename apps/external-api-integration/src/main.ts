@@ -8,7 +8,9 @@ async function bootstrap() {
     ExternalApiIntegrationModule,
   );
   const configService = appContext.get(ConfigService);
-  const port = configService.getOrThrow('EXTERNAL_API_INTEGRATION.PORT');
+  const port = configService.getOrThrow(
+    'EXTERNAL_API_INTEGRATION_SERVICE.PORT',
+  );
   appContext.close();
 
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(

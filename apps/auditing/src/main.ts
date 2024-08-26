@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 async function bootstrap() {
   const appContext = await NestFactory.createApplicationContext(AuditingModule);
   const configService = appContext.get(ConfigService);
-  const port = configService.getOrThrow('AUDITING.PORT');
+  const port = configService.getOrThrow('AUDITING_SERVICE.PORT');
   appContext.close();
 
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(

@@ -124,6 +124,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/core/tsconfig.lib.json"
       }
+    },
+    "flights": {
+      "type": "application",
+      "root": "apps/flights",
+      "entryFile": "main",
+      "sourceRoot": "apps/flights/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/flights/tsconfig.app.json"
+      }
     }
   },
   "monorepo": true,
