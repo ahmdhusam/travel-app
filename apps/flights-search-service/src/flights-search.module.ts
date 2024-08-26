@@ -39,12 +39,11 @@ import { FlightsSearchServiceProviders } from './enums/flights-search-service-pr
         return {
           ttl: 3 * 60 * 1000, // 3m in milli
           store: redisStore,
-          host: configService.getOrThrow(
+          url: `redis://${configService.getOrThrow(
             'FLIGHTS_SEARCH_SERVICE.CACHE_MANAGER.HOST',
-          ),
-          port: configService.getOrThrow(
+          )}:${configService.getOrThrow(
             'FLIGHTS_SEARCH_SERVICE.CACHE_MANAGER.PORT',
-          ),
+          )}`,
         };
       },
     }),

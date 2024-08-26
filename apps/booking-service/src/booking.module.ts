@@ -78,8 +78,7 @@ import { TransactionService } from './services/transaction.service';
         return {
           ttl: 3 * 60 * 1000, // 3m in milli
           store: redisStore,
-          host: configService.getOrThrow('BOOKING_SERVICE.CACHE_MANAGER.HOST'),
-          port: configService.getOrThrow('BOOKING_SERVICE.CACHE_MANAGER.PORT'),
+          url: `redis://${configService.getOrThrow('BOOKING_SERVICE.CACHE_MANAGER.HOST')}:${configService.getOrThrow('BOOKING_SERVICE.CACHE_MANAGER.PORT')}`,
         };
       },
     }),
