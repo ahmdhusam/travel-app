@@ -1,0 +1,175 @@
+version: "3.9"
+
+networks:
+  default:
+    name: travel-app-network
+
+services:
+  api:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./:/app
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+
+  postgres:
+    image: postgres:16 # Use the official Postgres image
+    environment:
+      POSTGRES_PASSWORD: your_postgres_password # Replace with your password
+      POSTGRES_USER: postgres # Default user
+      POSTGRES_DB: your_database_name # Replace with your database name
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist data volume
+      - postgres_backups:/backups
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+      - ./config/rabbitmq/:/var/log/rabbitmq
+
+  redis:
+    image: redis:7.0
+
+  nginx:
+    image: steveltn/https-portal:1.22.1
+    depends_on:
+      - api
+    environment:
+      DOMAINS: "localhost -> http://api:3000"
+      STAGE: "local"
+      ERROR_LOG: /var/log/custom-logs/error.log
+      ACCESS_LOG: /var/log/custom-logs/access.log
+    volumes:
+      - https-portal-data:/var/lib/https-portal
+      - ./config/nginx-conf/localhost.conf.erb:/var/lib/nginx-conf/localhost.conf.erb:ro
+      - ./config/nginx-conf/localhost.ssl.conf.erb:/var/lib/nginx-conf/localhost.ssl.conf.erb:ro
+      - ./config/nginx-conf/logs:/var/log/custom-logs/
+
+    env_file:
+      - .env
+    ports:
+      - "80:80"
+      - "443:443"
+
+  setup:
+    # profiles:
+    # - setup
+    build:
+      context: setup/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    init: true
+    volumes:
+      - ./config/setup/entrypoint.sh:/entrypoint.sh:ro,Z
+      - ./config/setup/lib.sh:/lib.sh:ro,Z
+      - ./config/setup/roles:/roles:ro,Z
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+      METRICBEAT_INTERNAL_PASSWORD: ${METRICBEAT_INTERNAL_PASSWORD:-}
+      FILEBEAT_INTERNAL_PASSWORD: ${FILEBEAT_INTERNAL_PASSWORD:-}
+      HEARTBEAT_INTERNAL_PASSWORD: ${HEARTBEAT_INTERNAL_PASSWORD:-}
+      MONITORING_INTERNAL_PASSWORD: ${MONITORING_INTERNAL_PASSWORD:-}
+      BEATS_SYSTEM_PASSWORD: ${BEATS_SYSTEM_PASSWORD:-}
+
+  elasticsearch:
+    build:
+      context: elasticsearch/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    volumes:
+      - ./config/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
+      - elasticsearchdata:/usr/share/elasticsearch/data:Z
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      node.name: elasticsearch
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      # Bootstrap password.
+      # Used to initialize the keystore during the initial startup of
+      # Elasticsearch. Ignored on subsequent runs.
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      # Use single node discovery in order to disable production mode and avoid bootstrap checks.
+      # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+      discovery.type: single-node
+    depends_on:
+      - setup
+
+    restart: unless-stopped
+
+  logstash:
+    build:
+      context: logstash/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    volumes:
+      - ./config/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
+      - ./config/logstash/pipeline:/usr/share/logstash/pipeline:ro,Z
+    ports:
+      - 5044:5044
+      - 50000:50000/tcp
+      - 50000:50000/udp
+      - 9600:9600
+    environment:
+      LS_JAVA_OPTS: -Xms256m -Xmx256m
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
+
+    depends_on:
+      - elasticsearch
+      - setup
+
+    restart: unless-stopped
+
+  kibana:
+    build:
+      context: kibana/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    volumes:
+      - ./config/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
+    ports:
+      - 5601:5601
+    environment:
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+    depends_on:
+      - elasticsearch
+      - setup
+
+    restart: unless-stopped
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.4
+    container_name: keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+
+    command: -v start-dev
+    ports:
+      - 8080:8080
+volumes:
+  postgres_data: {}
+  rabbitmq_data: {}
+  postgres_backups:
+  https-portal-data:
+  elasticsearchdata:
