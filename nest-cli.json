@@ -1,11 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/travel-app/src",
+  "sourceRoot": "apps/gateway-service/src",
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": true,
-    "tsConfigPath": "apps/travel-app/tsconfig.app.json"
+    "tsConfigPath": "apps/gateway-service/tsconfig.app.json"
   },
   "projects": {
     "database": {
@@ -17,103 +17,94 @@
         "tsConfigPath": "libs/database/tsconfig.lib.json"
       }
     },
-    "travel-app": {
+    "gateway-service": {
       "type": "application",
-      "root": "apps/travel-app",
+      "root": "apps/gateway-service",
       "entryFile": "main",
-      "sourceRoot": "apps/travel-app/src",
+      "sourceRoot": "apps/gateway-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/travel-app/tsconfig.app.json"
+        "tsConfigPath": "apps/gateway-service/tsconfig.app.json"
       }
     },
-    "auditing": {
+    "auditing-service": {
       "type": "application",
-      "root": "apps/auditing",
+      "root": "apps/auditing-service",
       "entryFile": "main",
-      "sourceRoot": "apps/auditing/src",
+      "sourceRoot": "apps/auditing-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/auditing/tsconfig.app.json"
+        "tsConfigPath": "apps/auditing-service/tsconfig.app.json"
       }
     },
-    "authentication": {
+    "authentication-service": {
       "type": "application",
-      "root": "apps/authentication",
+      "root": "apps/authentication-service",
       "entryFile": "main",
-      "sourceRoot": "apps/authentication/src",
+      "sourceRoot": "apps/authentication-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/authentication/tsconfig.app.json"
+        "tsConfigPath": "apps/authentication-service/tsconfig.app.json"
       }
     },
-    "booking": {
+    "booking-service": {
       "type": "application",
-      "root": "apps/booking",
+      "root": "apps/booking-service",
       "entryFile": "main",
-      "sourceRoot": "apps/booking/src",
+      "sourceRoot": "apps/booking-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/booking/tsconfig.app.json"
+        "tsConfigPath": "apps/booking-service/tsconfig.app.json"
       }
     },
-    "external-api-integration": {
+    "external-api-integration-service": {
       "type": "application",
-      "root": "apps/external-api-integration",
+      "root": "apps/external-api-integration-service",
       "entryFile": "main",
-      "sourceRoot": "apps/external-api-integration/src",
+      "sourceRoot": "apps/external-api-integration-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/external-api-integration/tsconfig.app.json"
+        "tsConfigPath": "apps/external-api-integration-service/tsconfig.app.json"
       }
     },
-    "hotels": {
+    "hotels-search-service": {
       "type": "application",
-      "root": "apps/hotels",
+      "root": "apps/hotels-search-service",
       "entryFile": "main",
-      "sourceRoot": "apps/hotels/src",
+      "sourceRoot": "apps/hotels-search-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/hotels/tsconfig.app.json"
+        "tsConfigPath": "apps/hotels-search-service/tsconfig.app.json"
       }
     },
-    "logging-and-monitoring": {
+    "logging-and-monitoring-service": {
       "type": "application",
-      "root": "apps/logging-and-monitoring",
+      "root": "apps/logging-and-monitoring-service",
       "entryFile": "main",
-      "sourceRoot": "apps/logging-and-monitoring/src",
+      "sourceRoot": "apps/logging-and-monitoring-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/logging-and-monitoring/tsconfig.app.json"
+        "tsConfigPath": "apps/logging-and-monitoring-service/tsconfig.app.json"
       }
     },
-    "notifications": {
+    "notifications-service": {
       "type": "application",
-      "root": "apps/notifications",
+      "root": "apps/notifications-service",
       "entryFile": "main",
-      "sourceRoot": "apps/notifications/src",
+      "sourceRoot": "apps/notifications-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/notifications/tsconfig.app.json"
+        "tsConfigPath": "apps/notifications-service/tsconfig.app.json"
       }
     },
-    "payments": {
+    "payments-service": {
       "type": "application",
-      "root": "apps/payments",
+      "root": "apps/payments-service",
       "entryFile": "main",
-      "sourceRoot": "apps/payments/src",
+      "sourceRoot": "apps/payments-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/payments/tsconfig.app.json"
+        "tsConfigPath": "apps/payments-service/tsconfig.app.json"
       }
     },
-    "transactions": {
+    "users-service": {
       "type": "application",
-      "root": "apps/transactions",
+      "root": "apps/users-service",
       "entryFile": "main",
-      "sourceRoot": "apps/transactions/src",
+      "sourceRoot": "apps/users-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/transactions/tsconfig.app.json"
-      }
-    },
-    "users": {
-      "type": "application",
-      "root": "apps/users",
-      "entryFile": "main",
-      "sourceRoot": "apps/users/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/users/tsconfig.app.json"
+        "tsConfigPath": "apps/users-service/tsconfig.app.json"
       }
     },
     "core": {
@@ -125,16 +116,16 @@
         "tsConfigPath": "libs/core/tsconfig.lib.json"
       }
     },
-    "flights": {
+    "flights-search-service": {
       "type": "application",
-      "root": "apps/flights",
+      "root": "apps/flights-search-service",
       "entryFile": "main",
-      "sourceRoot": "apps/flights/src",
+      "sourceRoot": "apps/flights-search-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/flights/tsconfig.app.json"
+        "tsConfigPath": "apps/flights-search-service/tsconfig.app.json"
       }
     }
   },
   "monorepo": true,
-  "root": "apps/travel-app"
+  "root": "apps/gateway-service"
 }
