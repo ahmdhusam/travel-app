@@ -14,12 +14,14 @@ import { FlightsSearchService } from './services/flights-search.service';
 import { OrderService } from './services/order.service';
 import { PaymentService } from './services/payment.service';
 import { ExternalApiIntegrationService } from './services/external-api-integration.service';
+import { Transaction } from './models/transaction.model';
+import { TransactionService } from './services/transaction.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ['.env.example'] }),
     DatabaseModule,
-    SequelizeModule.forFeature([FlightBooking]),
+    SequelizeModule.forFeature([FlightBooking, Transaction]),
     ClientsModule.registerAsync([
       {
         name: BookingServiceProviders.EXTERNAL_API_INTEGRATION_SERVICE_CLIENT,
@@ -90,6 +92,7 @@ import { ExternalApiIntegrationService } from './services/external-api-integrati
     OrderService,
     PaymentService,
     ExternalApiIntegrationService,
+    TransactionService,
   ],
 })
 export class BookingModule {}

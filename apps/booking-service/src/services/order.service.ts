@@ -29,6 +29,7 @@ export class OrderService {
   async finalizeOrderAndSave(
     paymentOrderId: string,
     flightOrderDto: CreateFlightOrderDto,
+    transactionId: number,
   ): Promise<void> {
     const authorization = await this.checkAuthorization(paymentOrderId);
 
@@ -38,9 +39,14 @@ export class OrderService {
           flightOrderDto,
         );
 
+      // await this.flightBookingRepository.create({
+      //   flightOrderId: flightOrder.id,
+      //   paymentOrderId: paymentOrderId,
+      // });
+
       await this.flightBookingRepository.create({
         flightOrderId: flightOrder.id,
-        paymentOrderId: paymentOrderId,
+        transactionId,
       });
 
       await this.paymentService.capturePayment(authorization.id);
