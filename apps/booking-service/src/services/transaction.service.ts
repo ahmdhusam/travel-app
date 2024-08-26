@@ -8,7 +8,8 @@ import { InjectModel } from '@nestjs/sequelize';
 export class TransactionService {
   constructor(
     @InjectModel(Transaction)
-    private readonly transactionRepository: typeof Transaction) {}
+    private readonly transactionRepository: typeof Transaction,
+  ) {}
 
   async createTransaction(
     paymentOrderId: string,
