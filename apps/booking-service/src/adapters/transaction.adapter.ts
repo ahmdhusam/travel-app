@@ -5,7 +5,7 @@ import { isDefined } from 'class-validator';
 import { InjectModel } from '@nestjs/sequelize';
 
 @Injectable()
-export class TransactionService {
+export class TransactionAdapter {
   constructor(
     @InjectModel(Transaction)
     private readonly transactionRepository: typeof Transaction,

@@ -9,13 +9,12 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { BookingServiceProviders } from './enums/booking-service-providers.enum';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
-import { CacheService } from './services/cache.service';
-import { FlightsSearchService } from './services/flights-search.service';
-import { OrderService } from './services/order.service';
-import { PaymentService } from './services/payment.service';
-import { ExternalApiIntegrationService } from './services/external-api-integration.service';
+import { FlightsSearchAdapter } from './adapters/flights-search.adapter';
+import { OrdersAdapter } from './adapters/orders.adapter';
+import { PaymentAdapter } from './adapters/payment.adapter';
+import { ExternalApiIntegrationAdapter } from './adapters/external-api-integration.adapter';
 import { Transaction } from './models/transaction.model';
-import { TransactionService } from './services/transaction.service';
+import { TransactionAdapter } from './adapters/transaction.adapter';
 
 @Module({
   imports: [
@@ -86,12 +85,11 @@ import { TransactionService } from './services/transaction.service';
   controllers: [BookingController],
   providers: [
     BookingService,
-    CacheService,
-    FlightsSearchService,
-    OrderService,
-    PaymentService,
-    ExternalApiIntegrationService,
-    TransactionService,
+    FlightsSearchAdapter,
+    OrdersAdapter,
+    PaymentAdapter,
+    ExternalApiIntegrationAdapter,
+    TransactionAdapter,
   ],
 })
 export class BookingModule {}

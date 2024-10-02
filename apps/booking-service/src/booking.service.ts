@@ -1,18 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { CreateFlightOrderDto } from 'apps/shared/dtos/amadeus-data-model.dto';
-// import { CacheService } from './services/cache.service';
-import { OrderService } from './services/order.service';
-import { FlightsSearchService } from './services/flights-search.service';
+import { OrdersAdapter } from './adapters/orders.adapter';
+import { FlightsSearchAdapter } from './adapters/flights-search.adapter';
 import { PaymentOrderSerialize } from 'apps/shared/dtos/payment-order.serialize';
-import { TransactionService } from './services/transaction.service';
+import { TransactionAdapter } from './adapters/transaction.adapter';
 
 @Injectable()
 export class BookingService {
   constructor(
-    private readonly flightsSearchService: FlightsSearchService,
-    private readonly orderService: OrderService,
-    // private readonly cacheService: CacheService,
-    private readonly transactionService: TransactionService,
+    private readonly flightsSearchAdapter: FlightsSearchAdapter,
+    private readonly ordersAdapter: OrdersAdapter,
+    private readonly transactionsAdapter: TransactionAdapter,
   ) {}
 
   async createFlightOrder({
@@ -23,20 +21,15 @@ export class BookingService {
     // TODO: add paypal fees
 
     const { flightOffer: flightOfferPrice } =
-      await this.flightsSearchService.getFlightPrice({
+      await this.flightsSearchAdapter.getFlightPrice({
         flightOffer,
       });
 
-    const paymentOrder = await this.orderService.createOrder(
+    const paymentOrder = await this.ordersAdapter.createOrder(
       flightOfferPrice.price.total,
     );
 
-    // await this.cacheService.setFlightOfferDetails(paymentOrder.id, {
-    //   flightOffer: flightOfferPrice,
-    //   travelers,
-    // });
-
-    await this.transactionService.createTransaction(paymentOrder.id, {
+    await this.transactionsAdapter.createTransaction(paymentOrder.id, {
       flightOffer: flightOfferPrice,
       travelers,
     });
@@ -45,15 +38,12 @@ export class BookingService {
   }
 
   async confirmFlightOrder(paymentOrderId: string): Promise<void> {
-    // const flightOfferDetails =
-    //   await this.cacheService.getFlightOfferDetailsOrThrow(paymentOrderId);
-
     const transaction =
-      await this.transactionService.getTransactionByPaymentOrderId(
+      await this.transactionsAdapter.getTransactionByPaymentOrderId(
         paymentOrderId,
       );
 
-    return this.orderService.finalizeOrderAndSave(
+    return this.ordersAdapter.finalizeOrderAndSave(
       paymentOrderId,
       transaction.details,
       transaction.id,

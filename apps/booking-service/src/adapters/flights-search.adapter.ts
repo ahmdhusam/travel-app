@@ -8,7 +8,7 @@ import { BookingServiceProviders } from '../enums/booking-service-providers.enum
 import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
-export class FlightsSearchService {
+export class FlightsSearchAdapter {
   constructor(
     @Inject(BookingServiceProviders.FLIGHTS_SERVICE_CLIENT)
     private readonly flightsSearchServiceClient: ClientProxy,

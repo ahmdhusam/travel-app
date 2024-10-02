@@ -1,29 +1,29 @@
 import { CreateFlightOrderDto } from 'apps/shared/dtos/amadeus-data-model.dto';
-import { PaymentService } from './payment.service';
+import { PaymentAdapter } from './payment.adapter';
 import { Injectable } from '@nestjs/common';
 import { FlightBooking } from '../models/booking.model';
 import { InjectModel } from '@nestjs/sequelize';
-import { ExternalApiIntegrationService } from './external-api-integration.service';
+import { ExternalApiIntegrationAdapter } from './external-api-integration.adapter';
 import { PaymentOrderSerialize } from 'apps/shared/dtos/payment-order.serialize';
 import { PaymentAuthorizationSerialize } from 'apps/shared/dtos/payment-authorization.serialize';
 
 @Injectable()
-export class OrderService {
+export class OrdersAdapter {
   constructor(
-    private readonly paymentService: PaymentService,
+    private readonly paymentAdapter: PaymentAdapter,
     @InjectModel(FlightBooking)
     private readonly flightBookingRepository: typeof FlightBooking,
-    private readonly externalApiIntegrationService: ExternalApiIntegrationService,
+    private readonly externalApiIntegrationAdapter: ExternalApiIntegrationAdapter,
   ) {}
 
   createOrder(totalPrice: string): Promise<PaymentOrderSerialize> {
-    return this.paymentService.createOrder(totalPrice);
+    return this.paymentAdapter.createOrder(totalPrice);
   }
 
   private checkAuthorization(
     paymentOrderId: string,
   ): Promise<PaymentAuthorizationSerialize> {
-    return this.paymentService.checkAuthorization(paymentOrderId);
+    return this.paymentAdapter.checkAuthorization(paymentOrderId);
   }
 
   async finalizeOrderAndSave(
@@ -35,23 +35,18 @@ export class OrderService {
 
     try {
       const flightOrder =
-        await this.externalApiIntegrationService.createFlightOrder(
+        await this.externalApiIntegrationAdapter.createFlightOrder(
           flightOrderDto,
         );
-
-      // await this.flightBookingRepository.create({
-      //   flightOrderId: flightOrder.id,
-      //   paymentOrderId: paymentOrderId,
-      // });
 
       await this.flightBookingRepository.create({
         flightOrderId: flightOrder.id,
         transactionId,
       });
 
-      await this.paymentService.capturePayment(authorization.id);
+      await this.paymentAdapter.capturePayment(authorization.id);
     } catch (e) {
-      await this.paymentService.voidPayment(authorization.id);
+      await this.paymentAdapter.voidPayment(authorization.id);
 
       throw e;
     }

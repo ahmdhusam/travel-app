@@ -8,7 +8,7 @@ import {
 import { ExternalApiIntegrationServiceEvents } from '@app/core/enums/external-api-integration-service-events.enum';
 
 @Injectable()
-export class ExternalApiIntegrationService {
+export class ExternalApiIntegrationAdapter {
   constructor(
     @Inject(BookingServiceProviders.EXTERNAL_API_INTEGRATION_SERVICE_CLIENT)
     private readonly externalApiIntegrationServiceClient: ClientProxy,

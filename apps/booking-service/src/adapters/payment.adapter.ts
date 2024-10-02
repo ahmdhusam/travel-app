@@ -6,7 +6,7 @@ import { PaymentOrderSerialize } from 'apps/shared/dtos/payment-order.serialize'
 import { PaymentAuthorizationSerialize } from 'apps/shared/dtos/payment-authorization.serialize';
 
 @Injectable()
-export class PaymentService {
+export class PaymentAdapter {
   constructor(
     @Inject(BookingServiceProviders.PAYMENTS_SERVICE_CLIENT)
     private readonly paymentsServiceClient: ClientProxy,
