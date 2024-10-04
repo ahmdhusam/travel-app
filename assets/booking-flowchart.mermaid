@@ -1,0 +1,14 @@
+    A[Start] --> B[Search Flights]
+    B --> C{Flights Found?}
+    C -->|Yes| D[Select Flight]
+    C -->|No| B
+    D --> E[Check Price]
+    E --> F{Price Acceptable?}
+    F -->|Yes| G[Create Order]
+    F -->|No| B
+    G --> H[Process Payment]
+    H --> I{Payment Successful?}
+    I -->|Yes| J[Confirm Booking]
+    I -->|No| K[Cancel Order]
+    J --> L[End - Booking Confirmed]
+    K --> M[End - Booking Failed]
